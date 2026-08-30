@@ -166,7 +166,10 @@ public class GridScreen extends Screen {
                     && (libraryMode == LIBRARIES_HIDE || !hasConfig(mod.getId()))) {
                 continue;
             }
-            if (!showHiddenActive() && config.hiddenMods.contains(mod.getId())) {
+            if (config.privacyLock && config.lockedHidden.contains(mod.getId())) {
+                continue;
+            }
+            if (!config.showHidden && config.hiddenMods.contains(mod.getId())) {
                 continue;
             }
             if (!matchesSearch(mod, needle)) {
@@ -430,7 +433,7 @@ public class GridScreen extends Screen {
         graphics.disableScissor();
 
         // Fixed header band, Mod Menu's dark panel look.
-        boolean showHidden = showHiddenActive();
+        boolean showHidden = GridMenu.config().showHidden;
         graphics.fill(0, 0, this.width, HEADER_H, 0xE8161A1E);
         graphics.fill(0, HEADER_H, this.width, HEADER_H + 1, 0xFF000000);
 
@@ -438,7 +441,7 @@ public class GridScreen extends Screen {
         // show-hidden view the hidden count is skipped, they are on screen.
         int hiddenCount = GridMenu.config().hiddenMods.size();
         String counts = visible.size() + " shown";
-        if (!privacyLocked() && !showHidden && hiddenCount > 0) {
+        if (!showHidden && hiddenCount > 0) {
             counts += " · " + hiddenCount + " hidden";
         }
         int titleY = (HEADER_H - 8) / 2;
@@ -464,31 +467,18 @@ public class GridScreen extends Screen {
         }
 
         // Show Hidden toggle: open eye while active, struck eye while not.
-        // Under the privacy lock the button does not exist at all.
-        if (!privacyLocked()) {
-            int ex = headerEyeX();
-            int ey = headerEyeY();
-            boolean eyeHovered = mouseX >= ex && mouseX < ex + 20 && mouseY >= ey && mouseY < ey + 20;
-            graphics.fill(ex, ey, ex + 20, ey + 20, showHidden ? 0xE8404550 : 0xC02A2E36);
-            graphics.outline(ex, ey, 20, 20,
-                    showHidden ? 0xFFFFD75F : (eyeHovered ? 0xFFFFFFFF : 0xFF5A5F6A));
-            blitControl(graphics, showHidden ? OPEN_EYE_TEXTURE : HIDDEN_EYE_TEXTURE,
-                    ex + 2, ey + 2, 0xFFFFFFFF);
-            if (eyeHovered) {
-                graphics.setTooltipForNextFrame(this.font,
-                        Component.literal("Show hidden mods"), mouseX, mouseY);
-            }
+        int ex = headerEyeX();
+        int ey = headerEyeY();
+        boolean eyeHovered = mouseX >= ex && mouseX < ex + 20 && mouseY >= ey && mouseY < ey + 20;
+        graphics.fill(ex, ey, ex + 20, ey + 20, showHidden ? 0xE8404550 : 0xC02A2E36);
+        graphics.outline(ex, ey, 20, 20,
+                showHidden ? 0xFFFFD75F : (eyeHovered ? 0xFFFFFFFF : 0xFF5A5F6A));
+        blitControl(graphics, showHidden ? OPEN_EYE_TEXTURE : HIDDEN_EYE_TEXTURE,
+                ex + 2, ey + 2, 0xFFFFFFFF);
+        if (eyeHovered) {
+            graphics.setTooltipForNextFrame(this.font,
+                    Component.literal("Show hidden mods"), mouseX, mouseY);
         }
-    }
-
-    /** The F8 privacy lock: while on, the hide feature leaves zero trace in the UI. */
-    private boolean privacyLocked() {
-        return GridMenu.config().privacyLock;
-    }
-
-    /** Show-hidden view, with the privacy lock forcing it off. */
-    private boolean showHiddenActive() {
-        return GridMenu.config().showHidden && !privacyLocked();
     }
 
     /** True when the running Mod Menu still ships the legacy button sheet (18.x on 26.1). */
@@ -568,7 +558,7 @@ public class GridScreen extends Screen {
         int eyeLeft = tileEyeX(x, hasConfig);
         int starLeft = tileStarX(x, hasConfig);
         int textLeft = x + 4 + ICON_SIZE + 4;
-        int textRight = hovered ? (privacyLocked() ? starLeft : eyeLeft) - 2
+        int textRight = hovered ? eyeLeft - 2
                 : (hasConfig ? gearX(x) - 2 : x + TILE_W - 4);
         String name = this.font.plainSubstrByWidth(mod.getTranslatedName(), textRight - textLeft);
         graphics.text(this.font, name, textLeft, y + (TILE_H - 8) / 2, nameColor);
@@ -596,7 +586,7 @@ public class GridScreen extends Screen {
         }
 
         // Hover-only eye: struck eye hides a visible mod, open eye unhides a hidden one.
-        if (hovered && !privacyLocked()) {
+        if (hovered) {
             int ey = y + (TILE_H - EYE_SIZE) / 2;
             boolean eyeHovered = mouseX >= eyeLeft && mouseX < eyeLeft + EYE_SIZE
                     && mouseY >= ey && mouseY < ey + EYE_SIZE;
@@ -700,10 +690,10 @@ public class GridScreen extends Screen {
             return true;
         }
 
-        // Header Show Hidden toggle; inert under the privacy lock.
+        // Header Show Hidden toggle.
         int hx = headerEyeX();
         int hy = headerEyeY();
-        if (!privacyLocked() && mx >= hx && mx < hx + 20 && my >= hy && my < hy + 20) {
+        if (mx >= hx && mx < hx + 20 && my >= hy && my < hy + 20) {
             GridMenu.config().showHidden = !GridMenu.config().showHidden;
             GridMenu.saveConfig();
             rebuildList();
@@ -737,8 +727,7 @@ public class GridScreen extends Screen {
             // The eye and star only render while the tile is hovered, which a click implies.
             int ex = tileEyeX(x, hasConfig);
             int ey = y + (TILE_H - EYE_SIZE) / 2;
-            if (!privacyLocked()
-                    && mx >= ex && mx < ex + EYE_SIZE && my >= ey && my < ey + EYE_SIZE) {
+            if (mx >= ex && mx < ex + EYE_SIZE && my >= ey && my < ey + EYE_SIZE) {
                 var hiddenMods = GridMenu.config().hiddenMods;
                 if (!hiddenMods.remove(mod.getId())) {
                     hiddenMods.add(mod.getId());
@@ -765,17 +754,27 @@ public class GridScreen extends Screen {
     }
 
     /**
-     * F8 toggles the privacy lock. Deliberately unnamed anywhere in the
-     * UI; enabling it also drops out of show-hidden view so nothing
-     * hidden is left on screen.
+     * F8 toggles the privacy lock, deliberately unnamed anywhere in the UI.
+     * Locking parks the current hiddenMods content in lockedHidden, whose
+     * members then vanish entirely (uncounted, unsearchable, absent from
+     * show-hidden view) while the hide feature keeps operating normally on
+     * the now-empty hiddenMods set, so nothing looks missing to a viewer.
+     * Unlocking merges the parked set back. Both sets persist, so the
+     * state resumes correctly across restarts; double-toggling is a clean
+     * cycle and an empty move is fine.
      */
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_F8) {
             var config = GridMenu.config();
-            config.privacyLock = !config.privacyLock;
             if (config.privacyLock) {
-                config.showHidden = false;
+                config.hiddenMods.addAll(config.lockedHidden);
+                config.lockedHidden.clear();
+                config.privacyLock = false;
+            } else {
+                config.lockedHidden.addAll(config.hiddenMods);
+                config.hiddenMods.clear();
+                config.privacyLock = true;
             }
             GridMenu.saveConfig();
             rebuildList();

@@ -8,7 +8,7 @@ Client-side Fabric extension for Mod Menu. Turns the mods screen into a compact 
 - **Sections**: Favorites on top, then mods with settings, then a "No settings" group. Star a mod on hover to favorite it.
 - **Hide mods**: click the eye on a tile to hide mods you never touch; a header toggle shows them again, dimmed, for unhiding.
 - **Search** matches name, id, author and description. The header counts what you see: "Mods · 24 shown · 3 hidden".
-- **Streamer privacy**: press F8 in the mods screen to completely conceal the hidden-mods feature, no counter, no toggle, no trace, until you press it again.
+- **Streamer privacy**: press F8 in the mods screen and your currently hidden mods become completely invisible and uncounted, while the hide feature keeps working normally on top, so nothing looks off to anyone watching. F8 again brings them back.
 - **Classic view switch**: a button in each screen flips between the grid and Mod Menu's original list (for websites, issues and full descriptions), and your choice is remembered.
 - Follows Mod Menu's own settings for sorting, libraries, hidden mods and translated names, so both views always show the same world.
 
