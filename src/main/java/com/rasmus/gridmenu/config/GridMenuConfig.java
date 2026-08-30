@@ -22,4 +22,8 @@ public class GridMenuConfig implements ConfigData {
 
     @ConfigEntry.Gui.Excluded
     public java.util.Set<String> favoriteMods = new java.util.HashSet<>();
+
+    /** F8 toggle: while true, every trace of the hide feature vanishes from the UI. */
+    @ConfigEntry.Gui.Excluded
+    public boolean privacyLock = false;
 }
