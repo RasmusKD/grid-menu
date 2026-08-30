@@ -1,0 +1,5 @@
+{
+  "text.autoconfig.gridmenu.title": "Grid Menu Configuration",
+  "text.autoconfig.gridmenu.option.replaceModsScreen": "Replace Mods Screen",
+  "text.autoconfig.gridmenu.option.replaceModsScreen.@Tooltip": "Opens the compact grid instead of Mod Menu's list whenever the mods screen is opened."
+}

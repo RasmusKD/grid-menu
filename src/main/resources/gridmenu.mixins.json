@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.rasmus.gridmenu.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [],
+  "client": [
+    "ModsScreenAccessor",
+    "ModsScreenGridButtonMixin",
+    "ScreenSwapMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
