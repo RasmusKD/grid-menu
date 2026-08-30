@@ -766,17 +766,7 @@ public class GridScreen extends Screen {
     @Override
     public boolean keyPressed(KeyEvent event) {
         if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_F8) {
-            var config = GridMenu.config();
-            if (config.privacyLock) {
-                config.hiddenMods.addAll(config.lockedHidden);
-                config.lockedHidden.clear();
-                config.privacyLock = false;
-            } else {
-                config.lockedHidden.addAll(config.hiddenMods);
-                config.hiddenMods.clear();
-                config.privacyLock = true;
-            }
-            GridMenu.saveConfig();
+            GridMenu.togglePrivacyLock();
             rebuildList();
             return true;
         }

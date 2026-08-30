@@ -45,6 +45,33 @@ public final class GridMenu {
     }
 
     /**
+     * The one F8 privacy-lock toggle, shared by the grid and the classic
+     * screen so the two can never drift. Locking parks hiddenMods in
+     * lockedHidden (whose members then vanish everywhere) and leaves the
+     * hide feature operating normally on the emptied set; unlocking
+     * merges the parked set back. Both sets persist across restarts.
+     */
+    public static void togglePrivacyLock() {
+        var config = config();
+        if (config.privacyLock) {
+            config.hiddenMods.addAll(config.lockedHidden);
+            config.lockedHidden.clear();
+            config.privacyLock = false;
+        } else {
+            config.lockedHidden.addAll(config.hiddenMods);
+            config.hiddenMods.clear();
+            config.privacyLock = true;
+        }
+        saveConfig();
+    }
+
+    /** True when the given mod id is parked invisible by the privacy lock. */
+    public static boolean isLockedHidden(String modId) {
+        var config = config();
+        return config.privacyLock && config.lockedHidden.contains(modId);
+    }
+
+    /**
      * The screen setter was renamed setScreen -> setScreenAndShow in 26.2,
      * so resolve it by name at runtime; the runtime uses Mojang names, so
      * both spellings are reachable. Reflection is safer than signature

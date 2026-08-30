@@ -7,11 +7,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Adds the mirror of the grid's classic-view switch inside Mod Menu's own
@@ -41,5 +43,21 @@ public abstract class ModsScreenGridButtonMixin extends Screen {
                 .tooltip(Tooltip.create(Component.literal("Grid view")))
                 .build();
         this.addRenderableWidget(button);
+    }
+
+    /**
+     * F8 toggles the shared privacy lock here too, so the classic view
+     * hides and reveals the locked set the same instant the grid would.
+     * resize() re-runs init, rebuilding the mod list through
+     * ModSearch.search (which the lock filters) while keeping the search
+     * text, so the change applies immediately.
+     */
+    @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, remap = false)
+    private void gridmenu$togglePrivacyLock(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+        if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_F8) {
+            GridMenu.togglePrivacyLock();
+            this.resize(this.width, this.height);
+            cir.setReturnValue(true);
+        }
     }
 }
