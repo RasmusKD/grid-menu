@@ -1,6 +1,7 @@
 package com.rasmus.gridmenu.gui;
 
 import com.rasmus.gridmenu.GridMenu;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.terraformersmc.modmenu.ModMenu;
 import com.terraformersmc.modmenu.config.ModMenuConfig;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -667,7 +668,7 @@ public class GridScreen extends Screen {
         if (super.mouseClicked(event, doubleClick)) {
             return true;
         }
-        if (event.button() != 0) {
+        if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
             return false;
         }
         double mx = event.x();
@@ -765,7 +766,7 @@ public class GridScreen extends Screen {
      */
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_F8) {
+        if (event.key() == InputConstants.KEY_F8) {
             GridMenu.togglePrivacyLock();
             rebuildList();
             return true;

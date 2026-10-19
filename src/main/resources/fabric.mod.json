@@ -23,9 +23,9 @@
   "depends": {
     "fabricloader": ">=0.19.0",
     "fabric-api": "*",
-    "minecraft": ">=26.1",
+    "minecraft": "${mc_range}",
     "cloth-config2": ">=26.1.0",
-    "modmenu": ">=18.0.0",
+    "modmenu": "${modmenu_range}",
     "java": ">=25"
   },
   "icon": "assets/gridmenu/icon.png"

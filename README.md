@@ -14,7 +14,7 @@ Client-side Fabric extension for Mod Menu. Turns the mods screen into a compact 
 
 ## Requirements
 
-Fabric Loader, Fabric API, Cloth Config, Mod Menu (18+). Minecraft 26.1+. Client-side only.
+Fabric Loader, Fabric API, Cloth Config, Mod Menu (18+ on 26.1 and 26.2, 21+ on 26.3). Minecraft 26.1+, one jar per line (`+26.1` and `+26.3`). Client-side only.
 
 ## License
 

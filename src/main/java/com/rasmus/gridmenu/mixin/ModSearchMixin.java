@@ -5,6 +5,7 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import com.terraformersmc.modmenu.util.mod.Mod;
 import com.terraformersmc.modmenu.util.mod.ModSearch;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -20,6 +21,7 @@ import java.util.List;
  * Regular hiddenMods stay visible there, classic view has no show-hidden
  * concept and stealth only concerns the locked set.
  */
+@Pseudo
 @Mixin(value = ModSearch.class, remap = false)
 public class ModSearchMixin {
 

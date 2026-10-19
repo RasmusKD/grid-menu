@@ -1,5 +1,6 @@
 package com.rasmus.gridmenu.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.rasmus.gridmenu.GridMenu;
 import com.rasmus.gridmenu.gui.GridScreen;
 import com.terraformersmc.modmenu.gui.ModsScreen;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -24,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * persists preferGridView and jumps to the grid with the classic screen's
  * previous screen as parent.
  */
+@Pseudo
 @Mixin(value = ModsScreen.class)
 public abstract class ModsScreenGridButtonMixin extends Screen {
 
@@ -54,7 +57,7 @@ public abstract class ModsScreenGridButtonMixin extends Screen {
      */
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true, remap = false)
     private void gridmenu$togglePrivacyLock(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
-        if (event.key() == org.lwjgl.glfw.GLFW.GLFW_KEY_F8) {
+        if (event.key() == InputConstants.KEY_F8) {
             GridMenu.togglePrivacyLock();
             this.resize(this.width, this.height);
             cir.setReturnValue(true);
