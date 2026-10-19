@@ -6,6 +6,7 @@
   "client": [
     "ModSearchMixin",
     "ModsScreenAccessor",
+    "GuiScreenSwapMixin",
     "ModsScreenGridButtonMixin",
     "ScreenSwapMixin"
   ],
